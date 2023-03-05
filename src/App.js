@@ -122,7 +122,7 @@ export default function App() {
       }
       setFood(position);
     }
-  }, 30);
+  }, 50);
 
   useOnKeyPress(({ keyCode }) => {
     nextDirection.current = keyCode - 37;
