@@ -1,7 +1,7 @@
 import React from 'react';
 import './style.css';
 
-const size = 60;
+const size = 40;
 
 const map = Array(size)
   .fill(1)
