@@ -97,7 +97,7 @@ export default function App() {
     const step = DESTINATION[nextDirection.current];
     const next = [head[0] + step[0], head[1] + step[1]];
     if (isOutBound(next, size)) {
-      location.reload();
+      // location.reload();
       return;
     }
     if (
