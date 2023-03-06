@@ -75,7 +75,7 @@ const initialSnake = [
 ];
 
 export default function App() {
-  const [snake, setSnake] = React.useState(initialSnake);
+  const [snake, setSnake] = React.useState(initialSnake.slice());
   const [_, setFood] = React.useState(null);
   const paused = React.useRef(true);
   const [isPaused, setIsPaused] = React.useState(false);
@@ -89,10 +89,6 @@ export default function App() {
     }
     setIsPaused(false);
     const head = snake.at(-1);
-
-    if (!nextDirection.current >= DESTINATION.length) {
-      return;
-    }
 
     const step = DESTINATION[nextDirection.current];
     const next = [head[0] + step[0], head[1] + step[1]];
@@ -122,10 +118,14 @@ export default function App() {
       }
       setFood(position);
     }
-  }, 50);
+  }, 1000);
 
   useOnKeyPress(({ keyCode }) => {
-    nextDirection.current = keyCode - 37;
+    const code = keyCode - 37;
+    if (code >= 4 || code < 0) {
+      return;
+    }
+    nextDirection.current = code;
   });
 
   return (
