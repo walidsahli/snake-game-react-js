@@ -1,21 +1,26 @@
 import React from 'react';
 import './style.css';
 
-const size = 40;
+const size = { width: 40, height: 20 };
 
-const map = Array(size)
+const map = Array(size.width)
   .fill(1)
-  .map(() => Array(size).fill(0).slice());
+  .map(() => Array(size.height).fill(0).slice());
 
 const useOnNextTick = (cb, delay) => {
+  console.log(delay);
+  const id = React.useRef(null);
   React.useEffect(() => {
-    let id = setInterval(() => {
+    if (id.current) {
+      clearInterval(id.current);
+    }
+    id.current = setInterval(() => {
       cb();
     }, delay);
     return () => {
-      clearInterval(id);
+      clearInterval(id.current);
     };
-  }, []);
+  }, [delay]);
 };
 
 const useOnKeyPress = (cb) => {
@@ -36,8 +41,8 @@ const DESTINATION = [
 
 const isOutBound = (nextStep, size) => {
   return (
-    nextStep[0] >= size ||
-    nextStep[1] >= size ||
+    nextStep[0] >= size.width ||
+    nextStep[1] >= size.height ||
     nextStep[0] < 0 ||
     nextStep[1] < 0
   );
@@ -49,8 +54,8 @@ const randomIntFromInterval = (min, max) => {
 
 const generateRandomFoodPosition = (size) => {
   const position = [
-    randomIntFromInterval(0, size - 1),
-    randomIntFromInterval(0, size - 1),
+    randomIntFromInterval(0, size.width - 1),
+    randomIntFromInterval(0, size.height - 1),
   ];
   return position;
 };
@@ -74,11 +79,14 @@ const initialSnake = [
   [2, 0],
 ];
 
+const SPEEDS = [500, 200, 70];
+
 export default function App() {
   const [snake, setSnake] = React.useState(initialSnake.slice());
   const [_, setFood] = React.useState(null);
   const paused = React.useRef(true);
   const [isPaused, setIsPaused] = React.useState(false);
+  const [speed, setSpeed] = React.useState(SPEEDS[0]);
   const nextDirection = React.useRef(2);
   const foodRef = React.useRef(null);
 
@@ -118,7 +126,7 @@ export default function App() {
       }
       setFood(position);
     }
-  }, 1000);
+  }, speed);
 
   useOnKeyPress(({ keyCode }) => {
     const code = keyCode - 37;
@@ -129,7 +137,9 @@ export default function App() {
   });
 
   return (
-    <div>
+    <div
+      style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}
+    >
       <h1>Your score is: {snake.length - initialSnake.length}</h1>
       <button
         onClick={() => {
@@ -138,6 +148,21 @@ export default function App() {
       >
         {isPaused ? 'play' : 'pause'}
       </button>
+      <br />
+      <h4>select speed</h4>
+      <div style={{ display: 'flex' }}>
+        {SPEEDS.map((_speed, index) => {
+          return (
+            <button
+              onClick={() => {
+                setSpeed(_speed);
+              }}
+            >
+              {index}
+            </button>
+          );
+        })}
+      </div>
       <br />
       <br />
       <br />
